@@ -1,0 +1,7 @@
+{
+  "name": "Dra. Luiza Teixeira - Landing Page Premium",
+  "description": "Uma landing page exclusiva e de alta conversão para Harmonização Facial, focada em autoridade e experiência personalizada.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
