@@ -10,7 +10,8 @@ import {
   Star, 
   ShieldCheck, 
   ArrowRight,
-  X
+  X,
+  Quote
 } from 'lucide-react';
 import { AppState } from './types';
 import { EXPERT_NAME, PROFESSION, WHATSAPP_URL, INSTAGRAM_URL, IMAGES, QUIZ_QUESTIONS } from './constants';
@@ -24,7 +25,7 @@ export default function App() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 60;
+      const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = el.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -74,6 +75,8 @@ export default function App() {
       <NavItem label="Sobre Mim" target="sobre" />
       <span className="opacity-30">/</span>
       <NavItem label="Prova Visual" target="resultados" />
+      <span className="opacity-30">/</span>
+      <NavItem label="Depoimentos" target="depoimentos" />
       <span className="opacity-30">/</span>
       <NavItem label="Harmonização de 💚" target="harmony" />
       <span className="opacity-30">/</span>
@@ -440,7 +443,40 @@ export default function App() {
           <p className="text-center text-[10px] uppercase font-bold text-gray-300 mt-16 tracking-[0.3em]">⚠️ Nota: Cada face é única. Resultados são personalizados e variam entre pacientes.</p>
         </section>
 
-        <section id="harmony" className="py-32 px-6 bg-[#fdfbf7]">
+        <section id="depoimentos" className="py-32 px-6 bg-[#fdfbf7]">
+          <div className="container mx-auto">
+            <div className="text-center mb-20 space-y-6">
+               <div className="w-16 h-16 bg-[#c5a17e]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                 <Quote className="w-8 h-8 text-[#c5a17e]" />
+               </div>
+               <h2 className="text-5xl md:text-6xl font-serif text-[#4a3b31]">O que dizem minhas pacientes</h2>
+               <p className="text-gray-500 max-w-2xl mx-auto text-lg italic">Relatos reais de quem transformou a autoestima com segurança e naturalidade.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {IMAGES.testimonials.map((src, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  onClick={() => setShowLightbox(src)}
+                  className="bg-white p-4 rounded-[40px] shadow-xl border border-gray-100 cursor-zoom-in group hover:shadow-2xl transition-all"
+                >
+                  <div className="aspect-auto relative overflow-hidden rounded-[32px]">
+                    <img src={src} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div className="mt-6 flex justify-center gap-1 opacity-50">
+                    {[1,2,3,4,5].map(star => <Star key={star} className="w-3 h-3 text-[#c5a17e] fill-current" />)}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="harmony" className="py-32 px-6 bg-white">
           <div className="container mx-auto">
              <div className="text-center mb-20 space-y-4">
                <h2 className="text-5xl font-serif text-[#4a3b31]">Harmonização de 💚</h2>
@@ -460,7 +496,7 @@ export default function App() {
           </div>
         </section>
 
-        <section id="onde" className="py-32 px-6 bg-white">
+        <section id="onde" className="py-32 px-6 bg-[#fdfbf7]">
            <div className="container mx-auto max-w-6xl">
               <div className="text-center mb-16 space-y-4">
                 <div className="w-20 h-20 bg-[#c5a17e]/10 rounded-full flex items-center justify-center mx-auto mb-6">
