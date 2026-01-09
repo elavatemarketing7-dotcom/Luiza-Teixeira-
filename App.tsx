@@ -91,10 +91,10 @@ export default function App() {
       {appState !== AppState.WELCOME && (
         <div className="fixed top-0 left-0 w-full z-[70] bg-black/95 text-white py-3 overflow-hidden border-b border-white/10 shadow-lg">
           <div className="animate-marquee inline-flex whitespace-nowrap gap-8 text-[10px] uppercase tracking-[0.2em] font-bold">
-            <MarqueeContent />
-            <MarqueeContent />
-            <MarqueeContent />
-            <MarqueeContent />
+            < MarqueeContent />
+            < MarqueeContent />
+            < MarqueeContent />
+            < MarqueeContent />
           </div>
         </div>
       )}
@@ -235,48 +235,48 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-lg p-0 sm:p-4 overflow-y-auto"
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-lg p-0 sm:p-4"
           >
-            <div className="w-full h-full sm:h-auto sm:max-w-md bg-[#fdfbf7] sm:rounded-3xl flex flex-col items-center p-8 space-y-6 text-center shadow-2xl relative">
-              <button onClick={() => setAppState(AppState.MAIN_SITE)} className="absolute top-4 right-4 text-gray-400"><X /></button>
+            <div className="w-full h-full sm:h-auto sm:max-w-md bg-[#fdfbf7] sm:rounded-3xl flex flex-col items-center justify-center p-6 space-y-4 text-center shadow-2xl relative overflow-y-auto">
+              <button onClick={() => setAppState(AppState.MAIN_SITE)} className="absolute top-4 right-4 text-gray-400 p-2 z-10"><X /></button>
               
-              <div className="bg-green-100 text-green-700 px-6 py-2 rounded-full font-bold uppercase tracking-widest text-[10px] animate-bounce">
+              <div className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[9px] animate-bounce">
                 Perfil Compatível. Você é a Paciente ideal.
               </div>
 
               <div className="relative">
-                <div className="w-44 h-44 rounded-full overflow-hidden border-8 border-white shadow-2xl transform hover:rotate-2 transition-transform">
+                <div className="w-32 h-32 sm:w-44 sm:h-44 rounded-full overflow-hidden border-4 sm:border-8 border-white shadow-2xl transform hover:rotate-2 transition-transform">
                   <img src={IMAGES.hero} className="w-full h-full object-cover object-top" />
                 </div>
-                <div className="absolute -bottom-2 -right-2 bg-white p-3 rounded-full shadow-lg">
-                   <Star className="w-6 h-6 text-[#c5a17e] fill-current" />
+                <div className="absolute -bottom-1 -right-1 bg-white p-2 rounded-full shadow-lg">
+                   <Star className="w-4 h-4 sm:w-6 sm:h-6 text-[#c5a17e] fill-current" />
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-2xl font-serif text-[#4a3b31]">Pronto para Começar?</h3>
-                <p className="text-gray-600 text-sm px-4 leading-relaxed">
+              <div className="space-y-2">
+                <h3 className="text-xl sm:text-2xl font-serif text-[#4a3b31]">Pronto para Começar?</h3>
+                <p className="text-gray-600 text-[13px] sm:text-sm px-4 leading-snug sm:leading-relaxed">
                   Com base nas suas respostas, o Método da <b>{EXPERT_NAME}</b> consegue entregar exatamente a naturalidade e segurança que você procura.
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 w-full pt-4">
+              <div className="flex flex-col gap-2 w-full pt-2">
                 <button 
                   onClick={shareQuizResults}
-                  className="w-full py-5 bg-[#c5a17e] text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-[#c5a17e]/30 hover:bg-[#b38f6d] transition-all"
+                  className="w-full py-4 sm:py-5 bg-[#c5a17e] text-white rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-3 shadow-xl shadow-[#c5a17e]/30 hover:bg-[#b38f6d] transition-all"
                 >
                   <CheckCircle className="w-5 h-5" />
                   1- ENVIAR MINHA AVALIAÇÃO A DRA.
                 </button>
                 <button 
                   onClick={openWhatsApp}
-                  className="w-full py-4 border-2 border-green-600 text-green-600 rounded-2xl font-bold hover:bg-green-50 transition-all"
+                  className="w-full py-3.5 border-2 border-green-600 text-green-600 rounded-2xl font-bold text-sm sm:text-base hover:bg-green-50 transition-all"
                 >
                   2- CHAMAR NO WHATSAPP SEM COMPROMISSO
                 </button>
                 <button 
                   onClick={() => setAppState(AppState.MAIN_SITE)}
-                  className="w-full py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                  className="w-full py-3.5 bg-gray-100 text-gray-500 rounded-2xl font-bold text-sm sm:text-base hover:bg-gray-200 transition-all"
                 >
                   3- NÃO ENVIAR E CONTINUAR NO SITE
                 </button>
