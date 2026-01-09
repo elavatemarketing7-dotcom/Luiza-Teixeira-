@@ -82,11 +82,13 @@ export default function App() {
     </>
   );
 
+  const isOverlayActive = [AppState.QUIZ, AppState.ANALYZING, AppState.RESULT].includes(appState);
+
   return (
     <div className="relative min-h-screen">
-      {/* Marquee Navigation - Only visible when on main site */}
-      {appState === AppState.MAIN_SITE && (
-        <div className="fixed top-0 left-0 w-full z-50 bg-black/95 text-white py-3 overflow-hidden border-b border-white/10 shadow-lg">
+      {/* Marquee Navigation - Only visible when site is ready */}
+      {appState !== AppState.WELCOME && (
+        <div className="fixed top-0 left-0 w-full z-[70] bg-black/95 text-white py-3 overflow-hidden border-b border-white/10 shadow-lg">
           <div className="animate-marquee inline-flex whitespace-nowrap gap-8 text-[10px] uppercase tracking-[0.2em] font-bold">
             <MarqueeContent />
             <MarqueeContent />
@@ -96,19 +98,20 @@ export default function App() {
         </div>
       )}
 
-      <AnimatePresence mode="wait">
+      {/* WELCOME SCREEN */}
+      <AnimatePresence>
         {appState === AppState.WELCOME && (
           <motion.div 
             key="welcome"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-[#fdfbf7]"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#fdfbf7]"
           >
             <div className="max-w-md w-full glass-card rounded-3xl p-8 text-center space-y-8 shadow-2xl">
               <div className="relative inline-block">
-                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#c5a17e] shadow-lg mx-auto">
-                   <img src={IMAGES.hero} alt={EXPERT_NAME} className="w-full h-full object-cover" />
+                <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-[#c5a17e] shadow-lg mx-auto">
+                   <img src={IMAGES.hero} alt={EXPERT_NAME} className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1.5 border-2 border-white">
                   <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
@@ -146,24 +149,33 @@ export default function App() {
             </div>
           </motion.div>
         )}
+      </AnimatePresence>
 
+      {/* QUIZ OVERLAY */}
+      <AnimatePresence>
         {appState === AppState.QUIZ && (
           <motion.div 
             key="quiz"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
           >
-            <div className="max-w-md w-full bg-[#fdfbf7] rounded-3xl p-6 relative overflow-hidden shadow-2xl">
+            <div className="max-w-md w-full bg-[#fdfbf7] rounded-3xl p-6 relative overflow-hidden shadow-2xl border border-[#c5a17e]/20">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                   <img src={IMAGES.hero} className="w-10 h-10 rounded-full object-cover border-2 border-[#c5a17e]" />
+                   <div className="relative">
+                      <img src={IMAGES.hero} className="w-12 h-12 rounded-full object-cover object-top border-2 border-[#c5a17e]" />
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#c5a17e] rounded-full border-2 border-white flex items-center justify-center">
+                        <Star className="w-2 h-2 text-white fill-current" />
+                      </div>
+                   </div>
                    <div>
                      <p className="text-[10px] uppercase tracking-tighter text-[#c5a17e] font-bold">Avaliando seu Perfil</p>
-                     <p className="text-xs font-serif italic">{EXPERT_NAME}</p>
+                     <p className="text-sm font-serif italic text-[#4a3b31]">{EXPERT_NAME}</p>
                    </div>
                 </div>
-                <button onClick={() => setAppState(AppState.WELCOME)} className="text-gray-400"><X /></button>
+                <button onClick={() => setAppState(AppState.MAIN_SITE)} className="text-gray-400 p-2 hover:bg-gray-100 rounded-full transition-colors"><X className="w-5 h-5"/></button>
               </div>
 
               <div className="mb-6">
@@ -196,58 +208,78 @@ export default function App() {
             </div>
           </motion.div>
         )}
+      </AnimatePresence>
 
+      {/* ANALYZING OVERLAY */}
+      <AnimatePresence>
         {appState === AppState.ANALYZING && (
           <motion.div 
             key="analyzing"
-            className="fixed inset-0 z-[60] bg-[#fdfbf7] flex flex-col items-center justify-center p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] bg-[#fdfbf7]/90 backdrop-blur-xl flex flex-col items-center justify-center p-8"
           >
-            <div className="w-24 h-24 mb-8 border-4 border-[#c5a17e]/20 border-t-[#c5a17e] rounded-full animate-spin" />
+            <div className="relative w-32 h-32 mb-8">
+               <div className="absolute inset-0 border-4 border-[#c5a17e]/10 border-t-[#c5a17e] rounded-full animate-spin" />
+               <img src={IMAGES.hero} className="absolute inset-4 w-24 h-24 rounded-full object-cover object-top filter grayscale opacity-50" />
+            </div>
             <h2 className="text-2xl font-serif text-[#4a3b31] mb-2">Analisando Respostas...</h2>
-            <p className="text-gray-500 text-center max-w-xs">Buscando as melhores técnicas para o seu perfil exclusivo.</p>
+            <p className="text-gray-500 text-center max-w-xs font-medium">Buscando as melhores técnicas para o seu perfil exclusivo.</p>
           </motion.div>
         )}
+      </AnimatePresence>
 
+      {/* RESULT OVERLAY */}
+      <AnimatePresence>
         {appState === AppState.RESULT && (
           <motion.div 
             key="result"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-[#4a3b31] p-0 sm:p-4 overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-lg p-0 sm:p-4 overflow-y-auto"
           >
-            <div className="w-full h-full sm:h-auto sm:max-w-md bg-[#fdfbf7] sm:rounded-3xl flex flex-col items-center p-8 space-y-6 text-center">
+            <div className="w-full h-full sm:h-auto sm:max-w-md bg-[#fdfbf7] sm:rounded-3xl flex flex-col items-center p-8 space-y-6 text-center shadow-2xl relative">
+              <button onClick={() => setAppState(AppState.MAIN_SITE)} className="absolute top-4 right-4 text-gray-400"><X /></button>
+              
               <div className="bg-green-100 text-green-700 px-6 py-2 rounded-full font-bold uppercase tracking-widest text-[10px] animate-bounce">
                 Perfil Compatível. Você é a Paciente ideal.
               </div>
 
-              <div className="w-40 h-40 rounded-full overflow-hidden border-8 border-white shadow-2xl rotate-3">
-                <img src={IMAGES.hero} className="w-full h-full object-cover" />
+              <div className="relative">
+                <div className="w-44 h-44 rounded-full overflow-hidden border-8 border-white shadow-2xl transform hover:rotate-2 transition-transform">
+                  <img src={IMAGES.hero} className="w-full h-full object-cover object-top" />
+                </div>
+                <div className="absolute -bottom-2 -right-2 bg-white p-3 rounded-full shadow-lg">
+                   <Star className="w-6 h-6 text-[#c5a17e] fill-current" />
+                </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <h3 className="text-2xl font-serif text-[#4a3b31]">Pronto para Começar?</h3>
-                <p className="text-gray-600 text-sm px-4">
+                <p className="text-gray-600 text-sm px-4 leading-relaxed">
                   Com base nas suas respostas, o Método da <b>{EXPERT_NAME}</b> consegue entregar exatamente a naturalidade e segurança que você procura.
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 w-full">
+              <div className="flex flex-col gap-3 w-full pt-4">
                 <button 
                   onClick={shareQuizResults}
-                  className="w-full py-5 bg-[#c5a17e] text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-[#c5a17e]/30"
+                  className="w-full py-5 bg-[#c5a17e] text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-[#c5a17e]/30 hover:bg-[#b38f6d] transition-all"
                 >
                   <CheckCircle className="w-5 h-5" />
                   1- ENVIAR MINHA AVALIAÇÃO A DRA.
                 </button>
                 <button 
                   onClick={() => window.location.href = WHATSAPP_URL}
-                  className="w-full py-4 border-2 border-green-600 text-green-600 rounded-2xl font-bold"
+                  className="w-full py-4 border-2 border-green-600 text-green-600 rounded-2xl font-bold hover:bg-green-50 transition-all"
                 >
                   2- CHAMAR NO WHATSAPP SEM COMPROMISSO
                 </button>
                 <button 
                   onClick={() => setAppState(AppState.MAIN_SITE)}
-                  className="w-full py-4 text-gray-400 text-sm font-medium underline"
+                  className="w-full py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold hover:bg-gray-200 transition-all"
                 >
                   3- NÃO ENVIAR E CONTINUAR NO SITE
                 </button>
@@ -258,27 +290,30 @@ export default function App() {
       </AnimatePresence>
 
       {/* Main Landing Page Content */}
-      <main className={`${appState === AppState.MAIN_SITE ? 'block' : 'hidden'} pt-12`}>
+      <main className={`transition-all duration-700 ${appState === AppState.WELCOME ? 'opacity-0' : 'opacity-100'} ${isOverlayActive ? 'blur-md pointer-events-none scale-95' : 'blur-0 pointer-events-auto scale-100'} pt-12`}>
         {/* HERO SECTION */}
-        <section id="hero" className="relative pt-10 pb-20 overflow-hidden px-6">
-          <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <section id="hero" className="relative pt-16 pb-24 overflow-hidden px-6 bg-[#fdfbf7]">
+          <div className="container mx-auto grid md:grid-cols-2 gap-16 items-center">
             <motion.div 
               initial={{ x: -50, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               viewport={{ once: true }}
-              className="space-y-8 order-2 md:order-1"
+              className="space-y-8 order-2 md:order-1 relative z-10"
             >
-              <h1 className="text-5xl md:text-7xl font-serif leading-tight text-[#4a3b31]">
+              <div className="inline-block px-4 py-1 bg-[#c5a17e]/10 text-[#c5a17e] rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                Especialista em Harmonização
+              </div>
+              <h1 className="text-5xl md:text-8xl font-serif leading-[1.1] text-[#4a3b31]">
                 Olá, eu sou a <br/>
                 <span className="italic font-light">{EXPERT_NAME}</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-lg leading-relaxed">
                 Minha missão é realçar sua beleza de forma natural, segura e com foco na sua identidade única. Sem exageros, apenas a sua melhor versão.
               </p>
-              <div className="space-y-4 pt-4">
+              <div className="space-y-4 pt-6">
                 <button 
                   onClick={() => window.location.href = WHATSAPP_URL}
-                  className="w-full sm:w-auto px-10 py-5 bg-[#4a3b31] text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 shadow-2xl hover:scale-105 transition-transform"
+                  className="w-full sm:w-auto px-12 py-6 bg-[#4a3b31] text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(74,59,49,0.3)] hover:scale-105 transition-transform"
                 >
                   Agendar consulta no WhatsApp
                   <ArrowRight className="w-5 h-5" />
@@ -290,63 +325,97 @@ export default function App() {
               initial={{ scale: 0.8, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               viewport={{ once: true }}
-              className="relative order-1 md:order-2"
+              className="relative order-1 md:order-2 flex justify-center"
             >
-              <div className="absolute inset-0 bg-[#c5a17e] rounded-[100px] rotate-6 scale-95 opacity-20" />
-              <img src={IMAGES.hero} alt={EXPERT_NAME} className="relative z-10 w-full rounded-[100px] border-8 border-white shadow-2xl" />
+              <div className="relative w-full max-w-[500px]">
+                <div className="absolute -inset-6 bg-[#c5a17e]/10 rounded-[100px] rotate-6 scale-95 blur-3xl" />
+                <div className="relative z-10 p-2 bg-white rounded-[80px] shadow-2xl overflow-hidden border border-gray-100">
+                  <img src={IMAGES.hero} alt={EXPERT_NAME} className="w-full h-full object-cover object-top rounded-[72px]" />
+                </div>
+                {/* Floating Authority Badge */}
+                <div className="absolute -bottom-6 -left-6 z-20 bg-white p-6 rounded-3xl shadow-2xl border border-gray-50 space-y-2 hidden md:block">
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-[#c5a17e] fill-current" />)}
+                  </div>
+                  <p className="text-xs font-bold text-[#4a3b31]">+500 Pacientes Satisfeitas</p>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
 
-        {/* VIDEO SECTION */}
-        <section className="py-20 px-6 bg-white">
-          <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center">
-             <div className="relative group cursor-pointer overflow-hidden rounded-[40px] shadow-2xl aspect-video">
-                <video 
-                  controls
-                  className="w-full h-full object-cover"
-                  poster={IMAGES.hero}
+        {/* VIDEO SECTION - Optimized for 720p presentation */}
+        <section className="py-24 px-6 bg-white overflow-hidden">
+          <div className="container mx-auto max-w-[1280px]">
+            <div className="grid md:grid-cols-12 gap-12 items-center">
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 viewport={{ once: true }}
+                 className="md:col-span-8 relative group cursor-pointer overflow-hidden rounded-[40px] md:rounded-[60px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] aspect-video border-[10px] md:border-[16px] border-white bg-black ring-1 ring-gray-100"
+               >
+                  <video 
+                    controls
+                    className="w-full h-full object-cover"
+                    poster={IMAGES.hero}
+                  >
+                    <source src={IMAGES.videoUrl} type="video/mp4" />
+                    Seu navegador não suporta vídeos.
+                  </video>
+                  {/* Decorative corner element */}
+                  <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-widest hidden md:block">
+                    High Definition 720p
+                  </div>
+               </motion.div>
+               <div className="md:col-span-4 space-y-8">
+                 <div className="space-y-6">
+                   <h3 className="text-4xl md:text-5xl font-serif text-[#4a3b31] leading-[1.2]">Descubra a beleza em alta definição.</h3>
+                   <p className="text-gray-600 leading-relaxed italic text-xl border-l-4 border-[#c5a17e] pl-6 py-2">
+                     "Aperte o play e sinta a diferença de ser cuidada por quem entende que sua beleza é única e merece atenção especial."
+                   </p>
+                 </div>
+                 <div className="flex items-center gap-4 text-[#c5a17e] font-bold uppercase tracking-[0.2em] text-[10px]">
+                   <div className="h-[2px] w-12 bg-[#c5a17e]" />
+                   Técnica, Sensibilidade e Propósito
+                 </div>
+                 <button 
+                  onClick={() => window.location.href = WHATSAPP_URL}
+                  className="flex items-center gap-3 text-[#4a3b31] font-bold hover:text-[#c5a17e] transition-colors"
                 >
-                  <source src={IMAGES.videoUrl} type="video/mp4" />
-                </video>
-             </div>
-             <div className="space-y-6">
-               <h3 className="text-3xl font-serif text-[#4a3b31]">Descubra como a beleza pode ser realçada com técnica e sensibilidade.</h3>
-               <p className="text-gray-600 leading-relaxed italic">
-                 "Aperte o play e sinta a diferença de ser cuidada por quem entende que sua beleza é única, e merece atenção especial."
-               </p>
-               <div className="flex items-center gap-4 text-[#c5a17e] font-bold uppercase tracking-widest text-xs">
-                 <div className="h-[1px] w-12 bg-[#c5a17e]" />
-                 Resultados reais e transformadores
+                  Saber mais sobre o método <ArrowRight className="w-4 h-4" />
+                </button>
                </div>
-             </div>
+            </div>
           </div>
         </section>
 
         {/* QUEM SOU EU SECTION */}
-        <section id="sobre" className="py-24 px-6 bg-[#fdfbf7]">
-          <div className="container mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <section id="sobre" className="py-32 px-6 bg-[#fdfbf7]">
+          <div className="container mx-auto grid md:grid-cols-2 gap-20 items-center">
             <div className="relative">
-              <img src={IMAGES.hero} className="rounded-3xl shadow-xl w-full" />
-              <div className="absolute -bottom-10 -right-10 hidden lg:block w-64 p-6 glass-card rounded-2xl shadow-2xl">
-                <p className="font-serif italic text-lg text-[#4a3b31]">"Beleza é harmonia, não perfeição."</p>
+              <div className="relative z-10 bg-white p-4 rounded-3xl shadow-2xl border border-gray-100">
+                <img src={IMAGES.hero} className="rounded-2xl shadow-inner w-full h-[600px] object-cover object-top" />
+              </div>
+              <div className="absolute -bottom-10 -right-10 hidden lg:block w-72 p-8 glass-card rounded-3xl shadow-2xl border border-white/50">
+                <p className="font-serif italic text-xl text-[#4a3b31] leading-relaxed">"A verdadeira beleza está na harmonia que reflete quem você é."</p>
+                <div className="mt-4 font-signature text-3xl text-[#c5a17e]">{EXPERT_NAME}</div>
               </div>
             </div>
-            <div className="space-y-8">
-              <div className="inline-block px-4 py-1 bg-[#c5a17e]/10 text-[#c5a17e] rounded-full text-xs font-bold uppercase tracking-widest">Autoridade</div>
-              <h2 className="text-4xl md:text-5xl font-serif text-[#4a3b31]">Especialista em Naturalidade</h2>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Com anos de experiência em Harmonização Facial, desenvolvi um olhar criterioso que prioriza a elegância e o equilíbrio. Minha abordagem não é padronizada; cada paciente recebe um planejamento único.
+            <div className="space-y-10">
+              <div className="inline-block px-4 py-1 bg-[#c5a17e]/10 text-[#c5a17e] rounded-full text-xs font-bold uppercase tracking-widest">Trajetória e Propósito</div>
+              <h2 className="text-5xl md:text-6xl font-serif text-[#4a3b31] leading-tight">Especialista em Naturalidade</h2>
+              <p className="text-gray-600 leading-relaxed text-xl">
+                Com anos de dedicação exclusiva à Harmonização Facial, meu foco é devolver o que o tempo tirou, sem transformar você em outra pessoa. Minha técnica é baseada em ciência, sensibilidade e um olhar artístico individualizado.
               </p>
-              <ul className="grid gap-4">
+              <ul className="grid gap-6">
                 {[
                   "Avaliação individualizada e minuciosa",
                   "Uso exclusivo de produtos de alta performance",
                   "Protocolos de segurança rigorosos",
-                  "Foco total em resultados discretos e naturais"
+                  "Foco total em resultados discretos e elegantes"
                 ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-4 text-[#4a3b31] font-medium">
-                    <div className="p-1 bg-[#c5a17e] rounded-full"><CheckCircle className="w-4 h-4 text-white" /></div>
+                  <li key={idx} className="flex items-center gap-5 text-[#4a3b31] font-semibold text-lg">
+                    <div className="p-2 bg-[#c5a17e] rounded-xl shadow-lg shadow-[#c5a17e]/20"><CheckCircle className="w-5 h-5 text-white" /></div>
                     {item}
                   </li>
                 ))}
@@ -356,113 +425,66 @@ export default function App() {
         </section>
 
         {/* GALERIA RESULTADOS REAIS */}
-        <section id="resultados" className="py-24 px-6 bg-white">
-          <div className="container mx-auto text-center mb-16 space-y-4">
-             <h2 className="text-4xl md:text-5xl font-serif text-[#4a3b31]">Resultados Reais</h2>
-             <p className="text-gray-500 max-w-2xl mx-auto">Galeria exclusiva de transformações baseadas no Método {EXPERT_NAME}.</p>
+        <section id="resultados" className="py-32 px-6 bg-white">
+          <div className="container mx-auto text-center mb-20 space-y-6">
+             <h2 className="text-5xl md:text-6xl font-serif text-[#4a3b31]">Galeria de Resultados</h2>
+             <p className="text-gray-500 max-w-2xl mx-auto text-lg italic">"A naturalidade é a sofisticação máxima." — Confira transformações reais.</p>
           </div>
           
-          <div className="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {IMAGES.results.map((src, i) => (
               <motion.div 
                 key={i} 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
                 onClick={() => setShowLightbox(src)}
-                className="aspect-square relative group cursor-zoom-in overflow-hidden rounded-2xl"
+                className="aspect-[4/5] relative group cursor-zoom-in overflow-hidden rounded-[32px] shadow-lg border-4 border-white"
               >
-                <img src={src} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                   <div className="p-3 bg-white/50 backdrop-blur rounded-full text-white"><Star className="w-6 h-6" /></div>
+                <img src={src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-6 text-center">
+                   <div className="p-4 bg-white/20 backdrop-blur rounded-full text-white mb-4"><Star className="w-8 h-8 fill-current" /></div>
+                   <p className="text-white text-xs font-bold uppercase tracking-widest">Ver Detalhes</p>
                 </div>
               </motion.div>
             ))}
           </div>
-          <p className="text-center text-[10px] uppercase font-bold text-gray-300 mt-12 tracking-[0.2em]">⚠️ Aviso: Resultados podem variar de pessoa para pessoa.</p>
-        </section>
-
-        {/* POR QUE CONFIAR */}
-        <section className="py-24 px-6 bg-[#4a3b31]">
-           <div className="container mx-auto">
-             <div className="grid md:grid-cols-3 gap-8">
-               {[
-                 { title: "Avaliação Honesta", desc: "Só indico o que realmente trará benefício para sua harmonia facial.", icon: <ShieldCheck className="w-8 h-8"/> },
-                 { title: "Atendimento Exclusivo", desc: "Todo o procedimento é realizado pessoalmente por mim, com calma e precisão.", icon: <Star className="w-8 h-8"/> },
-                 { title: "Transparência Total", desc: "Você entenderá cada etapa, produto e expectativa real do seu resultado.", icon: <MessageCircle className="w-8 h-8"/> }
-               ].map((card, i) => (
-                 <div key={i} className="p-8 bg-white/5 rounded-3xl border border-white/10 text-white space-y-4 hover:bg-white/10 transition-colors">
-                   <div className="text-[#c5a17e]">{card.icon}</div>
-                   <h3 className="text-xl font-serif">{card.title}</h3>
-                   <p className="text-gray-400 leading-relaxed text-sm">{card.desc}</p>
-                 </div>
-               ))}
-             </div>
-           </div>
+          <p className="text-center text-[10px] uppercase font-bold text-gray-300 mt-16 tracking-[0.3em]">⚠️ Nota: Cada face é única. Resultados são personalizados e variam entre pacientes.</p>
         </section>
 
         {/* HARMONIZAÇÃO DE CORAÇÃO */}
-        <section id="harmony" className="py-24 px-6 bg-[#fdfbf7]">
+        <section id="harmony" className="py-32 px-6 bg-[#fdfbf7]">
           <div className="container mx-auto">
-             <div className="text-center mb-16">
-               <h2 className="text-4xl font-serif text-[#4a3b31]">Harmonização Facial de 💚</h2>
-               <p className="text-gray-500 mt-4">Transformações feitas com alma e propósito.</p>
+             <div className="text-center mb-20 space-y-4">
+               <h2 className="text-5xl font-serif text-[#4a3b31]">Harmonização de 💚</h2>
+               <p className="text-gray-500 text-lg italic">Momentos e transformações que marcam vidas.</p>
              </div>
-             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                 {IMAGES.harmonyGrid.map((src, i) => (
-                  <div key={i} className="aspect-square rounded-3xl overflow-hidden shadow-lg">
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ y: -10 }}
+                    className="aspect-square rounded-[40px] overflow-hidden shadow-2xl border-8 border-white"
+                  >
                     <img src={src} className="w-full h-full object-cover" />
-                  </div>
+                  </motion.div>
                 ))}
              </div>
           </div>
-        </section>
-
-        {/* COMO FUNCIONA */}
-        <section className="py-24 px-6 bg-white">
-          <div className="container mx-auto max-w-4xl">
-             <h2 className="text-3xl font-serif text-[#4a3b31] text-center mb-16">Como funciona a sua primeira consulta?</h2>
-             <div className="grid gap-12">
-               {[
-                 { step: "01", title: "Primeiro Contato", desc: "Ao clicar no botão, você falará com minha equipe para tirar dúvidas iniciais." },
-                 { step: "02", title: "Agendamento VIP", desc: "Reservamos um horário exclusivo para que possamos conversar com calma." },
-                 { step: "03", title: "Avaliação 360º", desc: "Na consulta, analisamos sua face em todos os ângulos para criar seu plano mestre." }
-               ].map((item, i) => (
-                 <div key={i} className="flex gap-8 items-start group">
-                   <span className="text-4xl font-serif italic text-[#c5a17e]/30 group-hover:text-[#c5a17e] transition-colors">{item.step}</span>
-                   <div className="space-y-2">
-                     <h3 className="text-xl font-bold text-[#4a3b31]">{item.title}</h3>
-                     <p className="text-gray-600">{item.desc}</p>
-                   </div>
-                 </div>
-               ))}
-             </div>
-          </div>
-        </section>
-
-        {/* DEPOIMENTOS / COMENTARIOS */}
-        <section className="py-24 px-6 bg-[#f5f0e9]">
-           <div className="container mx-auto overflow-hidden">
-              <h2 className="text-3xl font-serif text-[#4a3b31] text-center mb-12">O que as pacientes dizem</h2>
-              <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x">
-                {IMAGES.testimonials.map((src, i) => (
-                  <div key={i} className="min-w-[280px] snap-center bg-white p-4 rounded-3xl shadow-xl flex-shrink-0">
-                    <img src={src} className="w-full rounded-2xl" />
-                  </div>
-                ))}
-              </div>
-           </div>
         </section>
 
         {/* MAPA E ENDEREÇO */}
-        <section id="onde" className="py-24 px-6 bg-white">
-           <div className="container mx-auto max-w-5xl">
-              <div className="text-center mb-12">
-                <MapPin className="w-10 h-10 text-[#c5a17e] mx-auto mb-4" />
-                <h2 className="text-3xl font-serif text-[#4a3b31]">Onde nos Encontrar</h2>
-                <p className="text-gray-500 mt-2">Harmonização Facial - {EXPERT_NAME}</p>
+        <section id="onde" className="py-32 px-6 bg-white">
+           <div className="container mx-auto max-w-6xl">
+              <div className="text-center mb-16 space-y-4">
+                <div className="w-20 h-20 bg-[#c5a17e]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MapPin className="w-10 h-10 text-[#c5a17e]" />
+                </div>
+                <h2 className="text-5xl font-serif text-[#4a3b31]">Onde nos Encontrar</h2>
+                <p className="text-gray-500 text-lg">Ambiente exclusivo planejado para seu total conforto e segurança.</p>
               </div>
-              <div className="rounded-[40px] overflow-hidden shadow-2xl h-[400px] bg-gray-100 border-8 border-white">
+              <div className="rounded-[60px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.1)] h-[500px] bg-gray-100 border-[12px] border-white">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3493.5654326543!2d-52.41!3d-28.26!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDE1JzM2LjAiUyA1MsKwMjQnMzYuMCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890" 
                   width="100%" 
@@ -472,41 +494,53 @@ export default function App() {
                   loading="lazy" 
                 />
               </div>
-              <div className="mt-8 text-center space-y-4">
-                 <p className="text-lg font-medium text-gray-700">Passo Fundo - Rio Grande do Sul</p>
-                 <a href={INSTAGRAM_URL} target="_blank" className="inline-flex items-center gap-2 text-[#c5a17e] hover:underline font-bold">
-                   <Instagram className="w-5 h-5" /> @dra.luizateixeira
+              <div className="mt-12 text-center space-y-6">
+                 <p className="text-2xl font-serif text-[#4a3b31]">Passo Fundo - Rio Grande do Sul</p>
+                 <a href={INSTAGRAM_URL} target="_blank" className="inline-flex items-center gap-3 px-8 py-3 bg-white shadow-xl rounded-full text-[#c5a17e] hover:scale-105 transition-transform font-bold border border-gray-100">
+                   <Instagram className="w-6 h-6" /> @dra.luizateixeira
                  </a>
               </div>
            </div>
         </section>
 
         {/* CTA FINAL / CONTATO */}
-        <section id="contato" className="py-24 px-6 bg-[#4a3b31] text-white text-center">
-           <div className="container mx-auto space-y-8">
-             <h2 className="text-4xl md:text-5xl font-serif leading-tight">Chegou a hora de investir no seu <br/> maior patrimônio: <span className="italic">Você.</span></h2>
-             <p className="text-gray-300 max-w-lg mx-auto">Reserve sua primeira consulta sem compromisso e comece sua transformação.</p>
+        <section id="contato" className="py-32 px-6 bg-[#4a3b31] text-white text-center relative overflow-hidden">
+           {/* Decorative elements */}
+           <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+           <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#c5a17e]/10 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl" />
+           
+           <div className="container mx-auto space-y-10 relative z-10">
+             <h2 className="text-5xl md:text-7xl font-serif leading-tight">Chegou a hora de investir no seu <br/> maior patrimônio: <span className="italic">Você.</span></h2>
+             <p className="text-gray-300 max-w-lg mx-auto text-xl font-light">Sua beleza merece o cuidado de quem entende que o detalhe faz toda a diferença.</p>
              <button 
                onClick={() => window.location.href = WHATSAPP_URL}
-               className="inline-flex items-center gap-3 px-12 py-6 bg-[#c5a17e] rounded-full text-white font-bold text-xl shadow-2xl hover:scale-105 transition-transform"
+               className="inline-flex items-center gap-4 px-14 py-7 bg-[#c5a17e] rounded-full text-white font-bold text-2xl shadow-[0_30px_60px_rgba(197,161,126,0.3)] hover:scale-105 transition-transform"
              >
                Quero minha Avaliação Gratuita
-               <MessageCircle className="w-6 h-6" />
+               <MessageCircle className="w-8 h-8 fill-current" />
              </button>
-             <p className="text-xs text-gray-400 mt-4 italic">Fale diretamente com nossa equipe no WhatsApp.</p>
+             <div className="pt-8 flex flex-col items-center gap-4 opacity-50">
+                <p className="text-xs uppercase tracking-[0.3em] font-bold">Atendimento via WhatsApp</p>
+                <div className="flex gap-2">
+                  <Star className="w-3 h-3 fill-current" />
+                  <Star className="w-3 h-3 fill-current" />
+                  <Star className="w-3 h-3 fill-current" />
+                </div>
+             </div>
            </div>
         </section>
 
         {/* FOOTER */}
-        <footer className="py-12 px-6 bg-white border-t border-gray-100 text-center space-y-6">
-           <h3 className="font-signature text-5xl text-[#4a3b31]">{EXPERT_NAME}</h3>
-           <div className="space-y-2">
-             <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">{PROFESSION}</p>
-             <p className="text-xs text-gray-400">© 2024 Todos os direitos reservados.</p>
+        <footer className="py-20 px-6 bg-white border-t border-gray-100 text-center space-y-10">
+           <h3 className="font-signature text-6xl text-[#4a3b31]">{EXPERT_NAME}</h3>
+           <div className="space-y-4">
+             <p className="text-xs font-bold tracking-[0.4em] text-gray-400 uppercase">{PROFESSION}</p>
+             <div className="w-12 h-[2px] bg-[#c5a17e] mx-auto opacity-30" />
+             <p className="text-xs text-gray-400 font-medium">© 2024 • Todos os direitos reservados • Premium Experience</p>
            </div>
-           <div className="flex justify-center gap-6 text-gray-400">
-             <Instagram className="w-5 h-5 cursor-pointer hover:text-[#c5a17e]" />
-             <MessageCircle className="w-5 h-5 cursor-pointer hover:text-[#c5a17e]" />
+           <div className="flex justify-center gap-10 text-gray-400">
+             <a href={INSTAGRAM_URL} target="_blank" className="hover:text-[#c5a17e] transition-colors"><Instagram className="w-6 h-6" /></a>
+             <a href={WHATSAPP_URL} target="_blank" className="hover:text-[#c5a17e] transition-colors"><MessageCircle className="w-6 h-6" /></a>
            </div>
         </footer>
       </main>
@@ -525,25 +559,25 @@ export default function App() {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               src={showLightbox} 
-              className="max-w-full max-h-full rounded-2xl shadow-2xl"
+              className="max-w-full max-h-full rounded-2xl shadow-2xl border-4 border-white/10"
              />
-             <button className="absolute top-8 right-8 text-white"><X className="w-8 h-8" /></button>
+             <button className="absolute top-8 right-8 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"><X className="w-8 h-8" /></button>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Persistent CTA Button Mobile */}
-      {appState === AppState.MAIN_SITE && (
+      {!isOverlayActive && appState !== AppState.WELCOME && (
         <motion.div 
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
-          className="fixed bottom-6 right-6 z-50 md:hidden"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-8 right-8 z-[60] md:hidden"
         >
           <button 
             onClick={() => window.location.href = WHATSAPP_URL}
-            className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl border-4 border-white animate-bounce"
+            className="w-18 h-18 bg-green-500 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(34,197,94,0.4)] border-4 border-white active:scale-90 transition-transform"
           >
-            <MessageCircle className="w-8 h-8 fill-current" />
+            <MessageCircle className="w-10 h-10 fill-current" />
           </button>
         </motion.div>
       )}
