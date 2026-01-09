@@ -1,17 +1,15 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight, 
   CheckCircle, 
   Instagram, 
   MessageCircle, 
-  Play, 
   MapPin, 
   Star, 
   ShieldCheck, 
   ArrowRight,
-  Menu,
   X
 } from 'lucide-react';
 import { AppState } from './types';
@@ -23,11 +21,10 @@ export default function App() {
   const [answers, setAnswers] = useState<string[]>([]);
   const [showLightbox, setShowLightbox] = useState<string | null>(null);
 
-  // Scroll to section helper
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const offset = 60; // Offset for the marquee height
+      const offset = 60;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = el.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -51,9 +48,14 @@ export default function App() {
     }
   };
 
+  const openWhatsApp = () => {
+    window.open(WHATSAPP_URL, '_blank');
+  };
+
   const shareQuizResults = () => {
-    const text = `Olá Dra. Luiza! Concluí o quiz de avaliação personalizada. %0A%0ARespostas:%0A${QUIZ_QUESTIONS.map((q, i) => `- ${q.text}: ${answers[i]}`).join('%0A')}`;
-    window.location.href = `https://api.whatsapp.com/send/?phone=5554999568188&text=${text}`;
+    const text = encodeURIComponent(`Olá Dra. Luiza! Concluí o quiz de avaliação personalizada.\n\nRespostas:\n${QUIZ_QUESTIONS.map((q, i) => `- ${q.text}: ${answers[i]}`).join('\n')}`);
+    const url = `https://api.whatsapp.com/send/?phone=5554999568188&text=${text}&type=phone_number&app_absent=0&utm_source=ig`;
+    window.open(url, '_blank');
   };
 
   const NavItem = ({ label, target }: { label: string, target: string }) => (
@@ -86,7 +88,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Marquee Navigation - Only visible when site is ready */}
       {appState !== AppState.WELCOME && (
         <div className="fixed top-0 left-0 w-full z-[70] bg-black/95 text-white py-3 overflow-hidden border-b border-white/10 shadow-lg">
           <div className="animate-marquee inline-flex whitespace-nowrap gap-8 text-[10px] uppercase tracking-[0.2em] font-bold">
@@ -98,7 +99,6 @@ export default function App() {
         </div>
       )}
 
-      {/* WELCOME SCREEN */}
       <AnimatePresence>
         {appState === AppState.WELCOME && (
           <motion.div 
@@ -140,7 +140,7 @@ export default function App() {
                   Ir direto para o site
                 </button>
                 <button 
-                  onClick={() => window.location.href = WHATSAPP_URL}
+                  onClick={openWhatsApp}
                   className="text-sm font-medium text-gray-500 hover:text-[#4a3b31] underline underline-offset-4"
                 >
                   Chamar no WhatsApp agora
@@ -151,7 +151,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* QUIZ OVERLAY */}
       <AnimatePresence>
         {appState === AppState.QUIZ && (
           <motion.div 
@@ -210,7 +209,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* ANALYZING OVERLAY */}
       <AnimatePresence>
         {appState === AppState.ANALYZING && (
           <motion.div 
@@ -230,7 +228,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* RESULT OVERLAY */}
       <AnimatePresence>
         {appState === AppState.RESULT && (
           <motion.div 
@@ -272,7 +269,7 @@ export default function App() {
                   1- ENVIAR MINHA AVALIAÇÃO A DRA.
                 </button>
                 <button 
-                  onClick={() => window.location.href = WHATSAPP_URL}
+                  onClick={openWhatsApp}
                   className="w-full py-4 border-2 border-green-600 text-green-600 rounded-2xl font-bold hover:bg-green-50 transition-all"
                 >
                   2- CHAMAR NO WHATSAPP SEM COMPROMISSO
@@ -289,9 +286,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Landing Page Content */}
       <main className={`transition-all duration-700 ${appState === AppState.WELCOME ? 'opacity-0' : 'opacity-100'} ${isOverlayActive ? 'blur-md pointer-events-none scale-95' : 'blur-0 pointer-events-auto scale-100'} pt-12`}>
-        {/* HERO SECTION */}
         <section id="hero" className="relative pt-16 pb-24 overflow-hidden px-6 bg-[#fdfbf7]">
           <div className="container mx-auto grid md:grid-cols-2 gap-16 items-center">
             <motion.div 
@@ -312,7 +307,7 @@ export default function App() {
               </p>
               <div className="space-y-4 pt-6">
                 <button 
-                  onClick={() => window.location.href = WHATSAPP_URL}
+                  onClick={openWhatsApp}
                   className="w-full sm:w-auto px-12 py-6 bg-[#4a3b31] text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(74,59,49,0.3)] hover:scale-105 transition-transform"
                 >
                   Agendar consulta no WhatsApp
@@ -332,7 +327,6 @@ export default function App() {
                 <div className="relative z-10 p-2 bg-white rounded-[80px] shadow-2xl overflow-hidden border border-gray-100">
                   <img src={IMAGES.hero} alt={EXPERT_NAME} className="w-full h-full object-cover object-top rounded-[72px]" />
                 </div>
-                {/* Floating Authority Badge */}
                 <div className="absolute -bottom-6 -left-6 z-20 bg-white p-6 rounded-3xl shadow-2xl border border-gray-50 space-y-2 hidden md:block">
                   <div className="flex gap-1">
                     {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-[#c5a17e] fill-current" />)}
@@ -344,7 +338,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* VIDEO SECTION - Optimized for 720p presentation */}
         <section className="py-24 px-6 bg-white overflow-hidden">
           <div className="container mx-auto max-w-[1280px]">
             <div className="grid md:grid-cols-12 gap-12 items-center">
@@ -360,9 +353,7 @@ export default function App() {
                     poster={IMAGES.hero}
                   >
                     <source src={IMAGES.videoUrl} type="video/mp4" />
-                    Seu navegador não suporta vídeos.
                   </video>
-                  {/* Decorative corner element */}
                   <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-widest hidden md:block">
                     High Definition 720p
                   </div>
@@ -378,18 +369,11 @@ export default function App() {
                    <div className="h-[2px] w-12 bg-[#c5a17e]" />
                    Técnica, Sensibilidade e Propósito
                  </div>
-                 <button 
-                  onClick={() => window.location.href = WHATSAPP_URL}
-                  className="flex items-center gap-3 text-[#4a3b31] font-bold hover:text-[#c5a17e] transition-colors"
-                >
-                  Saber mais sobre o método <ArrowRight className="w-4 h-4" />
-                </button>
                </div>
             </div>
           </div>
         </section>
 
-        {/* QUEM SOU EU SECTION */}
         <section id="sobre" className="py-32 px-6 bg-[#fdfbf7]">
           <div className="container mx-auto grid md:grid-cols-2 gap-20 items-center">
             <div className="relative">
@@ -424,7 +408,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* GALERIA RESULTADOS REAIS */}
         <section id="resultados" className="py-32 px-6 bg-white">
           <div className="container mx-auto text-center mb-20 space-y-6">
              <h2 className="text-5xl md:text-6xl font-serif text-[#4a3b31]">Galeria de Resultados</h2>
@@ -453,7 +436,6 @@ export default function App() {
           <p className="text-center text-[10px] uppercase font-bold text-gray-300 mt-16 tracking-[0.3em]">⚠️ Nota: Cada face é única. Resultados são personalizados e variam entre pacientes.</p>
         </section>
 
-        {/* HARMONIZAÇÃO DE CORAÇÃO */}
         <section id="harmony" className="py-32 px-6 bg-[#fdfbf7]">
           <div className="container mx-auto">
              <div className="text-center mb-20 space-y-4">
@@ -474,7 +456,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* MAPA E ENDEREÇO */}
         <section id="onde" className="py-32 px-6 bg-white">
            <div className="container mx-auto max-w-6xl">
               <div className="text-center mb-16 space-y-4">
@@ -503,9 +484,7 @@ export default function App() {
            </div>
         </section>
 
-        {/* CTA FINAL / CONTATO */}
         <section id="contato" className="py-32 px-6 bg-[#4a3b31] text-white text-center relative overflow-hidden">
-           {/* Decorative elements */}
            <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#c5a17e]/10 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl" />
            
@@ -513,7 +492,7 @@ export default function App() {
              <h2 className="text-5xl md:text-7xl font-serif leading-tight">Chegou a hora de investir no seu <br/> maior patrimônio: <span className="italic">Você.</span></h2>
              <p className="text-gray-300 max-w-lg mx-auto text-xl font-light">Sua beleza merece o cuidado de quem entende que o detalhe faz toda a diferença.</p>
              <button 
-               onClick={() => window.location.href = WHATSAPP_URL}
+               onClick={openWhatsApp}
                className="inline-flex items-center gap-4 px-14 py-7 bg-[#c5a17e] rounded-full text-white font-bold text-2xl shadow-[0_30px_60px_rgba(197,161,126,0.3)] hover:scale-105 transition-transform"
              >
                Quero minha Avaliação Gratuita
@@ -530,7 +509,6 @@ export default function App() {
            </div>
         </section>
 
-        {/* FOOTER */}
         <footer className="py-20 px-6 bg-white border-t border-gray-100 text-center space-y-10">
            <h3 className="font-signature text-6xl text-[#4a3b31]">{EXPERT_NAME}</h3>
            <div className="space-y-4">
@@ -540,12 +518,11 @@ export default function App() {
            </div>
            <div className="flex justify-center gap-10 text-gray-400">
              <a href={INSTAGRAM_URL} target="_blank" className="hover:text-[#c5a17e] transition-colors"><Instagram className="w-6 h-6" /></a>
-             <a href={WHATSAPP_URL} target="_blank" className="hover:text-[#c5a17e] transition-colors"><MessageCircle className="w-6 h-6" /></a>
+             <button onClick={openWhatsApp} className="hover:text-[#c5a17e] transition-colors"><MessageCircle className="w-6 h-6" /></button>
            </div>
         </footer>
       </main>
 
-      {/* Lightbox Modal */}
       <AnimatePresence>
         {showLightbox && (
           <motion.div 
@@ -566,7 +543,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Persistent CTA Button Mobile */}
       {!isOverlayActive && appState !== AppState.WELCOME && (
         <motion.div 
           initial={{ y: 100, opacity: 0 }}
@@ -574,7 +550,7 @@ export default function App() {
           className="fixed bottom-8 right-8 z-[60] md:hidden"
         >
           <button 
-            onClick={() => window.location.href = WHATSAPP_URL}
+            onClick={openWhatsApp}
             className="w-18 h-18 bg-green-500 text-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(34,197,94,0.4)] border-4 border-white active:scale-90 transition-transform"
           >
             <MessageCircle className="w-10 h-10 fill-current" />

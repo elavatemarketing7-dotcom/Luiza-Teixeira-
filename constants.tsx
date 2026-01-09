@@ -3,7 +3,7 @@ import { Question } from './types';
 
 export const EXPERT_NAME = "Dra. Luiza Teixeira";
 export const PROFESSION = "Harmonização Facial";
-export const WHATSAPP_URL = "https://api.whatsapp.com/send/?phone=5554999568188&text=Olá Dra. Luiza, realizei o quiz e gostaria de agendar uma avaliação!&type=phone_number&app_absent=0";
+export const WHATSAPP_URL = "https://api.whatsapp.com/send/?phone=5554999568188&text&type=phone_number&app_absent=0&utm_source=ig";
 export const INSTAGRAM_URL = "https://www.instagram.com/dra.luizateixeira/";
 
 export const IMAGES = {
