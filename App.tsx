@@ -348,6 +348,10 @@ export default function App() {
                  className="md:col-span-8 relative group cursor-pointer overflow-hidden rounded-[40px] md:rounded-[60px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] aspect-video border-[10px] md:border-[16px] border-white bg-black ring-1 ring-gray-100"
                >
                   <video 
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
                     controls
                     className="w-full h-full object-cover"
                     poster={IMAGES.hero}
